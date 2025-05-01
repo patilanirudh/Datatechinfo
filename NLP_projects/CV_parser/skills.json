@@ -1,0 +1,11 @@
+{
+    "Programming": [ "Java", "C++", "JavaScript", "R", "Go"],
+    "Data Science": ["machine learning", "deep learning", "data analysis", "data visualization", "NLP", "computer vision"],
+    "Tools & Libraries": ["pandas", "numpy", "scikit-learn", "tensorflow", "keras", "matplotlib", "seaborn"],
+    "Databases": ["SQL", "NoSQL", "MongoDB", "PostgreSQL", "MySQL"],
+    "Cloud & DevOps": ["AWS", "Azure", "GCP", "Docker", "Kubernetes"],
+    "Soft Skills": ["communication", "leadership", "teamwork", "problem solving", "critical thinking"],
+    "Business & Marketing": ["product management", "marketing analytics", "SEO", "digital marketing"],
+    "Gen AI": ["LLM", "Prompt Engineering", "LangChain", "Groq", "RAG", "Agentic AI"]
+  }
+  
