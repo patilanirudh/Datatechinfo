@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Search Results Viewer</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .search-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status.processing {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .status.failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .result-content {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .task-list {
+            margin-top: 30px;
+        }
+        .task-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .task-item:hover {
+            background: #e9ecef;
+        }
+        .task-meta {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 AI Search Results Viewer</h1>
+        
+        <div class="search-section">
+            <h2>Submit New Search</h2>
+            <div class="input-group">
+                <input type="text" id="searchQuery" placeholder="Enter your search query..." value="latest developments in artificial intelligence">
+                <button onclick="submitSearch()">Search</button>
+            </div>
+            <div id="submitStatus"></div>
+        </div>
+
+        <div class="search-section">
+            <h2>Check Task Result</h2>
+            <div class="input-group">
+                <input type="text" id="taskId" placeholder="Enter task ID...">
+                <button onclick="checkResult()">Get Result</button>
+            </div>
+            <div id="checkStatus"></div>
+        </div>
+
+        <div class="results" id="results"></div>
+
+        <div class="task-list">
+            <h2>Recent Tasks</h2>
+            <button onclick="loadTasks()">Refresh Task List</button>
+            <div id="taskList"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        let currentTaskId = null;
+
+        async function submitSearch() {
+            const query = document.getElementById('searchQuery').value;
+            const statusDiv = document.getElementById('submitStatus');
+            
+            if (!query.trim()) {
+                statusDiv.innerHTML = '<div class="error">Please enter a search query</div>';
+                return;
+            }
+
+            statusDiv.innerHTML = '<div class="status pending">Submitting search...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/search`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        description: query,
+                        task_type: 'research'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentTaskId = data.task_id;
+                    document.getElementById('taskId').value = currentTaskId;
+                    statusDiv.innerHTML = `<div class="status completed">Search submitted! Task ID: ${currentTaskId}</div>`;
+                    
+                    // Auto-check result after a delay
+                    setTimeout(() => checkResult(), 2000);
+                } else {
+                    statusDiv.innerHTML = `<div class="error">Error: ${data.detail}</div>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function checkResult() {
+            const taskId = document.getElementById('taskId').value;
+            const statusDiv = document.getElementById('checkStatus');
+            const resultsDiv = document.getElementById('results');
+            
+            if (!taskId.trim()) {
+                statusDiv.innerHTML = '<div class="error">Please enter a task ID</div>';
+                return;
+            }
+
+            statusDiv.innerHTML = '<div class="status processing">Checking result...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/search/${taskId}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.innerHTML = `<div class="status ${data.status}">${data.status.toUpperCase()}</div>`;
+                    
+                    if (data.status === 'completed' && data.result) {
+                        resultsDiv.innerHTML = `
+                            <h3>Search Results</h3>
+                            <div class="result-content">${data.result}</div>
+                        `;
+                    } else if (data.status === 'processing') {
+                        resultsDiv.innerHTML = '<div class="loading">Task is still processing... Please wait and try again.</div>';
+                        // Auto-retry after 3 seconds
+                        setTimeout(() => checkResult(), 3000);
+                    } else if (data.status === 'failed') {
+                        resultsDiv.innerHTML = `<div class="error">Task failed: ${data.result}</div>`;
+                    } else {
+                        resultsDiv.innerHTML = '<div class="loading">Task is pending...</div>';
+                    }
+                } else {
+                    statusDiv.innerHTML = `<div class="error">Error: ${data.detail}</div>`;
+                    resultsDiv.innerHTML = '';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+                resultsDiv.innerHTML = '';
+            }
+        }
+
+        async function loadTasks() {
+            const taskListDiv = document.getElementById('taskList');
+            taskListDiv.innerHTML = '<div class="loading">Loading tasks...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/tasks`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    if (data.tasks.length === 0) {
+                        taskListDiv.innerHTML = '<div class="loading">No tasks found</div>';
+                        return;
+                    }
+
+                    taskListDiv.innerHTML = data.tasks.map(task => `
+                        <div class="task-item" onclick="loadTaskResult('${task.id}')">
+                            <div><strong>Query:</strong> ${task.description}</div>
+                            <div class="task-meta">
+                                <span>Status: ${task.status}</span> | 
+                                <span>Agent: ${task.assigned_agent || 'Not assigned'}</span> | 
+                                <span>Created: ${new Date(task.created_at).toLocaleString()}</span>
+                                ${task.completed_at ? ` | Completed: ${new Date(task.completed_at).toLocaleString()}` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    taskListDiv.innerHTML = `<div class="error">Error loading tasks: ${data.detail}</div>`;
+                }
+            } catch (error) {
+                taskListDiv.innerHTML = `<div class="error">Network error: ${error.message}</div>`;
+            }
+        }
+
+        function loadTaskResult(taskId) {
+            document.getElementById('taskId').value = taskId;
+            checkResult();
+        }
+
+        // Load tasks on page load
+        window.onload = function() {
+            loadTasks();
+        };
+
+        // Allow Enter key to submit search
+        document.getElementById('searchQuery').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitSearch();
+            }
+        });
+
+        document.getElementById('taskId').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkResult();
+            }
+        });
+    </script>
+</body>
+</html>
