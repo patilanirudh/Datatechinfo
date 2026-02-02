@@ -1,0 +1,9 @@
+chromadb
+sentence-transformers
+streamlit
+pypdf2
+python-dotenv
+unsloth
+torch
+transformers
+datasets
