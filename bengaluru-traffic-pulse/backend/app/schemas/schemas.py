@@ -55,3 +55,14 @@ class RiskDay(BaseModel):
     reasons: list[str]
     recommendation: str
     related_event: str | None = None
+
+
+class LocationSearchResult(BaseModel):
+    query: str
+    freeform_address: str
+    lat: float
+    lon: float
+    current_speed_kmh: float
+    free_flow_speed_kmh: float
+    congestion_ratio: float
+    severity: str

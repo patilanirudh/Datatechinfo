@@ -17,7 +17,8 @@ export interface CongestionReading {
   free_flow_travel_time_s: number;
   confidence: number;
   road_closure: boolean;
-  congestion_ratio: number;
+  /** +Infinity server-side for a closed road, which serializes over JSON as null. */
+  congestion_ratio: number | null;
   severity: Severity;
 }
 
@@ -67,4 +68,15 @@ export interface Solutions {
 
 export interface CaseStudy {
   markdown: string;
+}
+
+export interface LocationSearchResult {
+  query: string;
+  freeform_address: string;
+  lat: number;
+  lon: number;
+  current_speed_kmh: number;
+  free_flow_speed_kmh: number;
+  congestion_ratio: number | null;
+  severity: Severity;
 }
