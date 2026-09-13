@@ -1,0 +1,43 @@
+name: Ingest traffic data
+
+# Two schedules in one workflow: congestion polling needs to be frequent (the
+# TomTom Flow Segment Data free tier gives 20K/month; 6 corridors every 15 min
+# is ~17K/month). Incident polling is throttled harder (Incident Details free
+# tier is only 2.5K/month total, so every 3h keeps us at ~240/month).
+#
+# Known limitation: GitHub disables scheduled workflows after 60 days with no
+# repo activity. If the dashboard goes stale, push any commit to re-enable it.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+    - cron: "0 */3 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  poll-congestion:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '*/15 * * * *'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r ingestion/requirements.txt
+      - run: python ingestion/poll_congestion.py
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TOMTOM_API_KEY: ${{ secrets.TOMTOM_API_KEY }}
+
+  poll-incidents:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 */3 * * *'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r ingestion/requirements.txt
+      - run: python ingestion/poll_incidents.py
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TOMTOM_API_KEY: ${{ secrets.TOMTOM_API_KEY }}
