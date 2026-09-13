@@ -1,17 +1,22 @@
+import { AlertOctagon, AlertTriangle, CheckCircle2, Siren } from "lucide-react";
+import { RISK_STATUS, STATUS_BG_CLASS, STATUS_TEXT_CLASS } from "@/lib/status";
 import type { RiskLevel } from "@/lib/types";
 
-const STYLES: Record<RiskLevel, string> = {
-  LOW: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
-  MEDIUM: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
-  HIGH: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300",
-  CRITICAL: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
+const ICON: Record<RiskLevel, typeof CheckCircle2> = {
+  LOW: CheckCircle2,
+  MEDIUM: AlertTriangle,
+  HIGH: AlertOctagon,
+  CRITICAL: Siren,
 };
 
 export default function RiskBadge({ level }: { level: RiskLevel }) {
+  const status = RISK_STATUS[level];
+  const Icon = ICON[level];
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${STYLES[level]}`}
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_BG_CLASS[status]} ${STATUS_TEXT_CLASS[status]}`}
     >
+      <Icon size={12} strokeWidth={2.5} aria-hidden />
       {level}
     </span>
   );

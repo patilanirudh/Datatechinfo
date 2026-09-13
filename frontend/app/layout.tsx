@@ -25,12 +25,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-zinc-50 dark:bg-black">
+      <body className="flex min-h-full flex-col bg-[var(--background)] text-[var(--text-primary)]">
         <Nav />
         <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-6 py-8">
           {children}
         </main>
-        <footer className="border-t border-zinc-200 py-6 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-500">
+        <footer className="border-t border-[var(--border-hairline)] py-6 text-center text-xs text-[var(--text-muted)]">
           Traffic data via TomTom. Congestion severity is this project&apos;s own speed-ratio scale, not
           Bengaluru Traffic Police&apos;s queue-length scale.
         </footer>

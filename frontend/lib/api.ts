@@ -4,6 +4,7 @@ import type {
   CongestionReading,
   Incident,
   LiveCorridorStatus,
+  LocationSearchResult,
   RiskDay,
   Solutions,
 } from "./types";
@@ -14,15 +15,20 @@ class ApiError extends Error {
   constructor(
     public readonly path: string,
     public readonly status: number,
+    public readonly detail?: string,
   ) {
-    super(`Request to ${path} failed with status ${status}`);
+    super(detail ?? `Request to ${path} failed with status ${status}`);
   }
 }
 
 async function apiFetch<T>(path: string): Promise<T> {
   const res = await fetch(`${API_BASE_URL}${path}`, { cache: "no-store" });
   if (!res.ok) {
-    throw new ApiError(path, res.status);
+    const detail = await res
+      .json()
+      .then((body: { detail?: string }) => body.detail)
+      .catch(() => undefined);
+    throw new ApiError(path, res.status, detail);
   }
   return res.json() as Promise<T>;
 }
@@ -55,6 +61,10 @@ export function getCaseStudy(): Promise<CaseStudy> {
 
 export function getSolutions(): Promise<Solutions> {
   return apiFetch<Solutions>("/api/solutions");
+}
+
+export function searchLocation(query: string): Promise<LocationSearchResult> {
+  return apiFetch<LocationSearchResult>(`/api/congestion/search?q=${encodeURIComponent(query)}`);
 }
 
 export { ApiError, API_BASE_URL };
