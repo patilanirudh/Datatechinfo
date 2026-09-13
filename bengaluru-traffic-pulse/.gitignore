@@ -1,0 +1,18 @@
+# env files — never commit secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# Node (frontend/ has its own more detailed .gitignore; this covers the rest)
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

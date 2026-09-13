@@ -1,0 +1,77 @@
+{
+  "_comment": "Coordinates geocoded via OpenStreetMap Nominatim (2026-09-12). Chokepoints named directly in news coverage of the Sep 11 2026 exodus and prior-year recurrences.",
+  "corridors": [
+    {
+      "id": "tumkur-road",
+      "name": "Tumkur Road / NH48 (Peenya-Goraguntepalya)",
+      "lat": 13.0399163,
+      "lon": 77.5183214,
+      "direction": "Bengaluru → Nelamangala / Tumakuru",
+      "evidence": "Repeatedly named as gridlocked (Goraguntepalya Jn, Peenya flyover) in 2025/2026 Ganesh Chaturthi coverage",
+      "sources": [
+        "https://tv9kannada.com/business/massive-4-km-traffic-jam-on-bengaluru-nelamangala-highway-ahead-of-ganesh-chaturthi-long-weekend-ambulances-stranded-1237350.html"
+      ]
+    },
+    {
+      "id": "nelamangala-toll",
+      "name": "Nelamangala Toll Plaza",
+      "lat": 13.0979667,
+      "lon": 77.3945591,
+      "direction": "Bengaluru → Tumakuru / Mumbai highway",
+      "evidence": "4km+ jam reported at this toll plaza ahead of Ganesh Chaturthi long weekend",
+      "sources": [
+        "https://tv9kannada.com/business/massive-4-km-traffic-jam-on-bengaluru-nelamangala-highway-ahead-of-ganesh-chaturthi-long-weekend-ambulances-stranded-1237350.html"
+      ]
+    },
+    {
+      "id": "mysore-road",
+      "name": "Mysore Road (NH275)",
+      "lat": 12.9466619,
+      "lon": 77.5300896,
+      "direction": "Bengaluru → Mysuru",
+      "evidence": "Named as heavily congested well into the night on Sep 11 2026",
+      "sources": [
+        "https://newsable.asianetnews.com/karnataka-news/watch-viral-video-bengaluru-holiday-rush-sees-residents-head-home-private-buses-hike-fares-articleshow-8sx2w15"
+      ]
+    },
+    {
+      "id": "ramanagara-toll",
+      "name": "Bengaluru-Mysuru Highway Toll Plaza (Sheshagirihalli/Kaniminike area)",
+      "lat": 12.8430892,
+      "lon": 77.4229732,
+      "direction": "Bengaluru → Mysuru",
+      "evidence": "Kilometre-long queues reported at Kaniminike and Sheshagirihalli toll plazas during the festival weekend",
+      "sources": [
+        "https://urbanacres.in/bengaluru-mysuru-highway-toll-plazas-hit-by-festival-traffic-jams/"
+      ]
+    },
+    {
+      "id": "kanakapura-road",
+      "name": "Kanakapura Road",
+      "lat": 12.8913224,
+      "lon": 77.5652429,
+      "direction": "Bengaluru → Kanakapura / Malavalli",
+      "evidence": "Named among the exit routes heavily congested on Sep 11 2026",
+      "sources": [
+        "https://newsable.asianetnews.com/karnataka-news/watch-viral-video-bengaluru-holiday-rush-sees-residents-head-home-private-buses-hike-fares-articleshow-8sx2w15"
+      ]
+    },
+    {
+      "id": "hosur-road-silkboard",
+      "name": "Hosur Road / Silk Board Junction",
+      "lat": 12.9158171,
+      "lon": 77.6240368,
+      "direction": "Bengaluru → Electronic City / Hosur / Tamil Nadu",
+      "evidence": "Named among the exit routes heavily congested on Sep 11 2026; also Bengaluru's most chronic year-round chokepoint, useful as a baseline-congestion control point",
+      "sources": [
+        "https://newsable.asianetnews.com/karnataka-news/watch-viral-video-bengaluru-holiday-rush-sees-residents-head-home-private-buses-hike-fares-articleshow-8sx2w15"
+      ]
+    }
+  ],
+  "reference_point": {
+    "name": "Kempegowda Bus Station (Majestic)",
+    "lat": 12.9781847,
+    "lon": 77.5721851,
+    "note": "Central reference point — the mobbed bus stand at the center of the exodus, not itself a polled corridor"
+  }
+}
