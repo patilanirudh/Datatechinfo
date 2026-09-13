@@ -13,7 +13,11 @@ type State =
   | { status: "error"; message: string }
   | { status: "ready"; result: LocationSearchResult };
 
-export default function LocationSearch() {
+export default function LocationSearch({
+  onResult,
+}: {
+  onResult?: (result: LocationSearchResult | null) => void;
+}) {
   const [query, setQuery] = useState("");
   const [state, setState] = useState<State>({ status: "idle" });
 
@@ -22,9 +26,11 @@ export default function LocationSearch() {
     const q = query.trim();
     if (!q) return;
     setState({ status: "loading" });
+    onResult?.(null);
     try {
       const result = await searchLocation(q);
       setState({ status: "ready", result });
+      onResult?.(result);
     } catch (err) {
       if (err instanceof ApiError) {
         setState({ status: "error", message: err.detail ?? "Search failed." });

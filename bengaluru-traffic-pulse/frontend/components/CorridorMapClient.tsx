@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { LiveCorridorStatus } from "@/lib/types";
+import type { LiveCorridorStatus, LocationSearchResult } from "@/lib/types";
 
 const CorridorMap = dynamic(() => import("./CorridorMap"), {
   ssr: false,
@@ -10,6 +10,12 @@ const CorridorMap = dynamic(() => import("./CorridorMap"), {
   ),
 });
 
-export default function CorridorMapClient({ corridors }: { corridors: LiveCorridorStatus[] }) {
-  return <CorridorMap corridors={corridors} />;
+export default function CorridorMapClient({
+  corridors,
+  searchMarker,
+}: {
+  corridors: LiveCorridorStatus[];
+  searchMarker?: LocationSearchResult | null;
+}) {
+  return <CorridorMap corridors={corridors} searchMarker={searchMarker} />;
 }
