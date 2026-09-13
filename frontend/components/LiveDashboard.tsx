@@ -1,15 +1,13 @@
 "use client";
 
-import { AlertTriangle, Bike, Bus, Car, Satellite, Search, Siren, TrafficCone } from "lucide-react";
+import { AlertTriangle, Car, Search, Siren, TrafficCone } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ApiError, getActiveIncidents, getLiveCongestion } from "@/lib/api";
 import { RISK_STATUS, STATUS_COLOR } from "@/lib/status";
-import type { Incident, LiveCorridorStatus, RiskDay } from "@/lib/types";
+import type { Incident, LiveCorridorStatus, LocationSearchResult, RiskDay } from "@/lib/types";
 import ApiErrorNotice from "./ApiErrorNotice";
-import CongestionBarChart from "./CongestionBarChart";
-import CorridorCard from "./CorridorCard";
-import CorridorMapClient from "./CorridorMapClient";
+import CorridorPanel from "./CorridorPanel";
 import LocationSearch from "./LocationSearch";
 import Reveal from "./Reveal";
 import RiskBadge from "./RiskBadge";
@@ -43,6 +41,7 @@ export default function LiveDashboard({
 }) {
   const [corridors, setCorridors] = useState(initialCorridors);
   const [incidents, setIncidents] = useState(initialIncidents);
+  const [searchResult, setSearchResult] = useState<LocationSearchResult | null>(null);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [now, setNow] = useState(new Date());
   const [flash, setFlash] = useState(false);
@@ -155,10 +154,10 @@ export default function LiveDashboard({
           </h2>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">
             Not one of the six pinned corridors — search any city or address, in India or worldwide, for its
-            real-time traffic speed right now.
+            real-time traffic speed. It drops a live pin on the satellite map below.
           </p>
           <div className="mt-4">
-            <LocationSearch />
+            <LocationSearch onResult={setSearchResult} />
           </div>
         </section>
       </Reveal>
@@ -188,66 +187,18 @@ export default function LiveDashboard({
 
       <Reveal delayMs={140}>
         <section>
-          <h2 className="text-lg font-semibold text-[var(--text-primary)]">Congestion by corridor</h2>
+          <h2 className="text-lg font-semibold text-[var(--text-primary)]">Corridors</h2>
           <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            Current travel time as a multiple of free-flow, ranked worst first. Hover a bar for speed detail.
-          </p>
-          <div className="mt-4 rounded-lg border border-[var(--border-hairline)] bg-[var(--surface-1)] p-4">
-            {corridors === null ? <ApiErrorNotice /> : <CongestionBarChart corridors={corridors} />}
-          </div>
-        </section>
-      </Reveal>
-
-      <Reveal delayMs={180}>
-        <section>
-          <h2 className="flex items-center gap-2 text-lg font-semibold text-[var(--text-primary)]">
-            <Satellite size={18} className="text-[var(--text-muted)]" aria-hidden />
-            Satellite view
-          </h2>
-          <p className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-[var(--text-secondary)]">
-            <span>The six corridors, pinned and color-coded by current severity.</span>
-            <span className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
-              <span className="flex items-center gap-1">
-                <Car size={14} aria-hidden /> private vehicles
-              </span>
-              <span className="flex items-center gap-1">
-                <Bus size={14} aria-hidden /> KSRTC buses
-              </span>
-              <span className="flex items-center gap-1">
-                <Bike size={14} aria-hidden /> two-wheelers
-              </span>
-            </span>
+            Live satellite view and ranked status in one place. The orange/red flow lines on the map are
+            TomTom&apos;s live traffic overlay across every road in view, not just the six pins.
           </p>
           <div className="mt-4">
-            {corridors === null ? <ApiErrorNotice /> : <CorridorMapClient corridors={corridors} />}
+            <CorridorPanel corridors={corridors} searchMarker={searchResult} />
           </div>
         </section>
       </Reveal>
 
       <Reveal delayMs={220}>
-        <section>
-          <h2 className="text-lg font-semibold text-[var(--text-primary)]">Live corridor status</h2>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            Click a corridor to see its congestion trend over the last 24 hours.
-          </p>
-
-          {corridors === null ? (
-            <div className="mt-4">
-              <ApiErrorNotice />
-            </div>
-          ) : corridors.length === 0 ? (
-            <p className="mt-4 text-sm text-[var(--text-muted)]">No corridors configured.</p>
-          ) : (
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {corridors.map((c) => (
-                <CorridorCard key={c.corridor.id} {...c} />
-              ))}
-            </div>
-          )}
-        </section>
-      </Reveal>
-
-      <Reveal delayMs={260}>
         <section>
           <h2 className="text-lg font-semibold text-[var(--text-primary)]">Active incidents</h2>
           {incidents === null ? (
